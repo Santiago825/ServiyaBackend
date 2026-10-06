@@ -1,0 +1,29 @@
+HELP.md
+target/
+bin/
+logs/
+*.log
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### Eclipse / STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### VS Code ###
+.vscode/
+
+### Secretos locales ###
+.env
+*.local.properties
