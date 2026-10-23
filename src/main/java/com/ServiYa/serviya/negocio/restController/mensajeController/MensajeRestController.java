@@ -1,5 +1,7 @@
 package com.ServiYa.serviya.negocio.restController.mensajeController;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ServiYa.serviya.modelos.modelos.mensaje.ConversacionDTO;
 import com.ServiYa.serviya.modelos.modelos.mensaje.MensajePaginaDTO;
 import com.ServiYa.serviya.negocio.servicios.mensajeService.MensajeService;
 import com.ServiYa.serviya.util.ConstantesSeguridadPathRest;
@@ -32,10 +35,16 @@ public class MensajeRestController {
 	private final MensajeService mensajeService;
 
 	@GetMapping(ConstantesSeguridadPathRest.PATH_OBTENER_MENSAJES + "/{interlocutor}")
-	public ResponseEntity<MensajePaginaDTO> obtenerMensajes(@PathVariable String interlocutor,
-			@RequestParam(required = false) Long beforeId, @RequestParam(required = false) Integer size,
+	public ResponseEntity<MensajePaginaDTO> obtenerMensajes(@PathVariable("interlocutor") String interlocutor,
+			@RequestParam(value = "beforeId", required = false) Long beforeId, @RequestParam(value = "size", required = false) Integer size,
 			Authentication authentication) {
 		return ResponseEntity
 				.ok(mensajeService.obtenerConversacion(authentication.getName(), interlocutor, beforeId, size));
+	}
+
+	/** Lista de chats con la vista previa (ultimo mensaje + hora) de cada conversacion del usuario del token. */
+	@GetMapping(ConstantesSeguridadPathRest.PATH_OBTENER_CONVERSACIONES)
+	public ResponseEntity<List<ConversacionDTO>> obtenerConversaciones(Authentication authentication) {
+		return ResponseEntity.ok(mensajeService.obtenerConversaciones(authentication.getName()));
 	}
 }

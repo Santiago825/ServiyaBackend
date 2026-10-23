@@ -44,4 +44,18 @@ public class ConstantesSeguridadPathRest {
     public static final String WS_DESTINO_ENVIAR = "/private-message";
     public static final String WS_COLA_MENSAJES = "/queue/messages";
     public static final String WS_COLA_ERRORES = "/queue/errors";
+    public static final String WS_COLA_PRESENCIA = "/queue/presence";
+
+    public static final String PATH_OBTENER_CONVERSACIONES = "/obtener_conversaciones";
+    public static final String PATH_OBTENER_PRESENCIA = "/obtener_presencia";
+    
+    public static final String PATH_CREAR_CONTRATO = "/crear_contrato";
+    public static final String PATH_MIS_CONTRATOS = "/mis_contratos";
+    public static final String PATH_MIS_CONTRATOS_COLABORADOR = "/mis_contratos_colaborador";
+    public static final String PATH_CONTRATO_DETALLE = "/contrato_detalle";
+    public static final String PATH_ACEPTAR_CONTRATO = "/aceptar_contrato";
+    public static final String PATH_RECHAZAR_CONTRATO = "/rechazar_contrato";
+    public static final String PATH_RESENAR_CONTRATO = "/resenar_contrato";
+    public static final String PATH_MIS_RESENAS_COLABORADOR = "/mis_resenas_colaborador";
+    public static final String PATH_DASHBOARD_COLABORADOR = "/dashboard_colaborador";
 }

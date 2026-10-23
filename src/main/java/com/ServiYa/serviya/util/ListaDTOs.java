@@ -25,10 +25,25 @@ public final class ListaDTOs {
 		return r;
 	}
 
+	/** Una PÁGINA de resultados: la lista de la página y los totales de toda la consulta. */
+	public static ListaDTO pagina(List<?> datos, long totalRegistros, int totalPaginas, String mensajeSiVacia) {
+		ListaDTO r = de(datos, mensajeSiVacia);
+		r.setTotalRegistros((int) Math.min(totalRegistros, Integer.MAX_VALUE));
+		r.setTotalPaginas(totalPaginas);
+		return r;
+	}
+
 	public static ListaDTO ok(String mensaje) {
 		ListaDTO r = new ListaDTO();
 		r.setCodigoRespuesta(ConstantesCodigosError.CODIGO_EXITO);
 		r.setMensajeRespuesta(mensaje);
+		return r;
+	}
+
+	/** Éxito sin mensaje y con lista vacía (p. ej. "el nombre de usuario está libre"). */
+	public static ListaDTO okSinDatos() {
+		ListaDTO r = ok(null);
+		r.setLista(java.util.List.of());
 		return r;
 	}
 

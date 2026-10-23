@@ -2,7 +2,7 @@ package com.ServiYa.serviya.repository.colaboradorRepository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,7 +15,7 @@ import com.ServiYa.serviya.modelos.modelos.resena.ResenaDTO;
  * antigua "reseña"/"id_reseña"; la entidad ahora es Resea (tabla "resea", id_resea).
  * Los DTO se mapean POR POSICIÓN: el orden de columnas debe coincidir con el constructor.
  */
-public interface ColaboradorRepository extends JpaRepository<Usuario, Integer> {
+public interface ColaboradorRepository extends Repository<Usuario, Integer> {
 
 	@Query(value = """
 			SELECT

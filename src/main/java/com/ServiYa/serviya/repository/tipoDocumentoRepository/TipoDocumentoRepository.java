@@ -1,12 +1,13 @@
 package com.ServiYa.serviya.repository.tipoDocumentoRepository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+import org.springframework.data.repository.Repository;
 
 import com.ServiYa.serviya.modelos.entity.tipoDocumento.TipoDocumento;
 
-public interface TipoDocumentoRepository extends JpaRepository<TipoDocumento, Long> {
-	
-	
-	
+/** Catálogo de solo lectura: se expone únicamente lo que el servicio usa. */
+public interface TipoDocumentoRepository extends Repository<TipoDocumento, Long> {
 
+	List<TipoDocumento> findAll();
 }

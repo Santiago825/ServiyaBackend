@@ -21,7 +21,8 @@ public interface PersonaRepository extends JpaRepository<Persona, Long> {
 		        p.foto AS foto,
 		        m.nombre AS municipio,
 		        s.nombre AS servicio,
-		        CAST(COALESCE(SUM(r.puntuacion), 0) AS SIGNED) AS puntuacion
+		        ROUND(AVG(r.puntuacion), 1) AS promedio,
+		        COUNT(r.id_resea) AS numeroResenas
 		    FROM persona p
 		    JOIN usuario u ON u.id_persona = p.id_persona
 		    LEFT JOIN municipio m ON p.id_municipio = m.id_municipio
@@ -29,7 +30,8 @@ public interface PersonaRepository extends JpaRepository<Persona, Long> {
 		    LEFT JOIN resea r ON r.id_colaborador = p.id_persona
 		    WHERE u.role = 'COLABORADOR'
 		    GROUP BY p.id_persona, p.nombre, p.apellido, p.foto, m.nombre, s.nombre
-		    ORDER BY puntuacion DESC
+		    HAVING COUNT(r.id_resea) > 0
+		    ORDER BY AVG(r.puntuacion) DESC, COUNT(r.id_resea) DESC
 		    LIMIT 4
 		""", nativeQuery = true)
 		List<PersonaRainting> findPersonasRaiting();

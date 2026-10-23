@@ -1,6 +1,5 @@
 package com.ServiYa.serviya.negocio.servicios.auth;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -8,6 +7,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import com.ServiYa.serviya.ExceptionHandler.BusinessException;
+import com.ServiYa.serviya.ExceptionHandler.TipoError;
 import com.ServiYa.serviya.modelos.entity.usuario.Usuario;
 import com.ServiYa.serviya.modelos.modelos.auth.AuthResponse;
 import com.ServiYa.serviya.modelos.modelos.auth.LoginRequest;
@@ -35,7 +35,7 @@ public class AuthService {
 			auth = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(request.getUsername().trim(), request.getPassword()));
 		} catch (AuthenticationException e) {
-			throw new BusinessException(HttpStatus.UNAUTHORIZED, ConstantesCodigosError.CODIGO_LOGIN_INVALIDO,
+			throw new BusinessException(TipoError.NO_AUTENTICADO, ConstantesCodigosError.CODIGO_LOGIN_INVALIDO,
 					ConstantesCodigosError.MENSAJE_LOGIN_NO_ENOCNTRADO);
 		}
 

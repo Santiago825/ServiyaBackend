@@ -11,19 +11,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * CORREGIDO: el archivo se llamaba "Reseña.java" pero declaraba "class Resea"
- * (y el nombre quedó mal codificado en el ZIP). javac exige que una clase pública
- * esté en un archivo con su mismo nombre, así que NO compilaba.
- * Ahora: paquete/archivo/clase "Resea" (ASCII). Tabla: resea.
+ * Reseña que un CONTRATANTE deja sobre el colaborador de un contrato (una por contrato).
+ * Tabla "resea" (ASCII, como en schema.sql): es la misma que leen las consultas nativas de
+ * ColaboradorRepository y PersonaRepository. Antes la entidad apuntaba a "resena" y lo que se
+ * guardara por JPA no se habría visto en esas consultas.
+ * La restricción única impide reseñar dos veces el mismo contrato (también ante doble clic).
  */
 @Entity
-@Table(name = "resena")
+@Table(name = "resea", uniqueConstraints = @UniqueConstraint(name = "uk_resea_contrato", columnNames = "id_contrato"))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,7 +34,7 @@ public class Resena {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_resena")
+	@Column(name = "id_resea")
 	private Long idResena;
 
 	private int puntuacion;

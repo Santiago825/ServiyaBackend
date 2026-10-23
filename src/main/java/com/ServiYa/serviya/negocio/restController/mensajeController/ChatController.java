@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 import com.ServiYa.serviya.ExceptionHandler.BusinessException;
+import com.ServiYa.serviya.ExceptionHandler.EstadoHttp;
 import com.ServiYa.serviya.modelos.modelos.error.ErrorResponse;
 import com.ServiYa.serviya.modelos.modelos.mensaje.MensajeEntranteDTO;
 import com.ServiYa.serviya.modelos.modelos.mensaje.MessageDTO;
@@ -57,7 +58,7 @@ public class ChatController {
 	public ErrorResponse manejarError(Exception ex) {
 		if (ex instanceof BusinessException be) {
 			return ErrorResponse.builder().codigoRespuesta(be.getCodigo()).mensajeRespuesta(be.getMessage())
-					.status(be.getStatus().value()).timestamp(Instant.now()).build();
+					.status(EstadoHttp.de(be.getTipo()).value()).timestamp(Instant.now()).build();
 		}
 		log.error("Error no controlado en el chat", ex);
 		return ErrorResponse.builder().codigoRespuesta(ConstantesCodigosError.CODIGO_ERROR_NO_CONTROLADO)

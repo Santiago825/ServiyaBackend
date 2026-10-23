@@ -1,17 +1,24 @@
 package com.ServiYa.serviya.negocio.servicios.mensajeService;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ServiYa.serviya.ExceptionHandler.BusinessException;
+import com.ServiYa.serviya.ExceptionHandler.TipoError;
 import com.ServiYa.serviya.modelos.entity.mensaje.Mensaje;
+import com.ServiYa.serviya.modelos.modelos.mensaje.ConversacionDTO;
 import com.ServiYa.serviya.modelos.modelos.mensaje.MensajePaginaDTO;
 import com.ServiYa.serviya.modelos.modelos.mensaje.MessageDTO;
 import com.ServiYa.serviya.modelos.modelos.mensaje.Status;
@@ -98,12 +105,44 @@ public class MensajeService {
 		return new MensajePaginaDTO(dtos, hayMas, cursor);
 	}
 
+	/**
+	 * Vista previa de la lista de chats: el ULTIMO mensaje (enviado o recibido) con cada interlocutor,
+	 * mas reciente primero. Son 3 consultas sin importar cuantos chats haya (2 agrupadas por indice +
+	 * 1 por ids), en lugar de pedir el historial de cada conversacion.
+	 */
+	@Transactional(readOnly = true)
+	public List<ConversacionDTO> obtenerConversaciones(String usuarioActual) {
+		Map<String, Long> ultimoPorInterlocutor = new HashMap<>();
+		for (Object[] fila : mensajeRepository.ultimoIdEnviadoPorReceptor(usuarioActual)) {
+			ultimoPorInterlocutor.merge((String) fila[0], (Long) fila[1], Math::max);
+		}
+		for (Object[] fila : mensajeRepository.ultimoIdRecibidoPorEmisor(usuarioActual)) {
+			ultimoPorInterlocutor.merge((String) fila[0], (Long) fila[1], Math::max);
+		}
+		if (ultimoPorInterlocutor.isEmpty()) {
+			return List.of();
+		}
+		Map<Long, Mensaje> porId = mensajeRepository.findAllById(ultimoPorInterlocutor.values()).stream()
+				.collect(Collectors.toMap(Mensaje::getId, Function.identity()));
+
+		return ultimoPorInterlocutor.entrySet().stream()
+				.map(e -> porId.containsKey(e.getValue())
+						? new ConversacionDTO(e.getKey(), aDto(porId.get(e.getValue())))
+						: null)
+				.filter(Objects::nonNull)
+				.sorted((a, b) -> Long.compare(b.getUltimoMensaje().getId(), a.getUltimoMensaje().getId()))
+				.toList();
+	}
+
 	private MessageDTO aDto(Mensaje m) {
+		// La columna es DATETIME sin zona (LocalDateTime.now() en la zona del servidor): se convierte a
+		// Instant con esa misma zona para que el cliente reciba un instante inequivoco.
 		return MessageDTO.builder().id(m.getId()).senderName(m.getSenderName()).receiverName(m.getReceiverName())
-				.message(m.getMessage()).status(Status.MESSAGE).timestamp(m.getTimestamp()).build();
+				.message(m.getMessage()).status(Status.MESSAGE)
+				.timestamp(m.getTimestamp().atZone(ZoneId.systemDefault()).toInstant()).build();
 	}
 
 	private BusinessException chatError(String mensaje) {
-		return new BusinessException(HttpStatus.BAD_REQUEST, ConstantesCodigosError.CODIGO_CHAT_INVALIDO, mensaje);
+		return new BusinessException(TipoError.VALIDACION, ConstantesCodigosError.CODIGO_CHAT_INVALIDO, mensaje);
 	}
 }

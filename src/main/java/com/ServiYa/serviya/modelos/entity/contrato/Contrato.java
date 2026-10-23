@@ -23,6 +23,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import com.ServiYa.serviya.modelos.modelos.contrato.EstadoContrato;
 
 /** RESTAURADO. El archivo del contrato (arch_contrato) no entra en toString. */
 @Entity
@@ -66,4 +69,10 @@ public class Contrato {
 
 	@OneToMany(targetEntity = Resena.class, fetch = FetchType.LAZY, mappedBy = "contrato")
 	private List<Resena> resenas;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "estado", nullable = false, length = 20)
+	private EstadoContrato estado;
+
+	@Column(name = "fecha_respuesta")
+	private Date fechaRespuesta;
 }

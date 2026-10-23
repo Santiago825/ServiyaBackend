@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(BusinessException.class)
 	public ResponseEntity<ErrorResponse> negocio(BusinessException ex, HttpServletRequest req) {
-		return build(ex.getStatus(), ex.getCodigo(), ex.getMessage(), req, null);
+		return build(EstadoHttp.de(ex.getTipo()), ex.getCodigo(), ex.getMessage(), req, null);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -106,6 +106,11 @@ public class GlobalExceptionHandler {
 		log.error("Error no controlado en {} {}", req.getMethod(), req.getRequestURI(), ex);
 		return build(HttpStatus.INTERNAL_SERVER_ERROR, ConstantesCodigosError.CODIGO_ERROR_NO_CONTROLADO,
 				ConstantesCodigosError.MENSAJE_CODIGO_ERROR_NO_CONTROLADO, req, null);
+	}
+	@ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+	public ResponseEntity<ErrorResponse> archivoMuyGrande(Exception ex, HttpServletRequest req) {
+		return build(HttpStatus.PAYLOAD_TOO_LARGE, ConstantesCodigosError.CODIGO_VALIDACION,
+				"El archivo supera el tamaño máximo permitido (5 MB).", req, null);
 	}
 
 	private ResponseEntity<ErrorResponse> build(HttpStatus status, String codigo, String mensaje,

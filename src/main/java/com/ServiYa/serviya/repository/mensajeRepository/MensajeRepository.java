@@ -27,4 +27,12 @@ public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
 	@Query("SELECT m FROM Mensaje m WHERE m.senderName = :de AND m.receiverName = :para AND m.id < :beforeId ORDER BY m.id DESC")
 	List<Mensaje> anterioresDe(@Param("de") String de, @Param("para") String para, @Param("beforeId") Long beforeId,
 			Pageable pageable);
+
+	/** Para la vista previa: id del ultimo mensaje que ENVIE a cada interlocutor (usa idx emisor,receptor,id). */
+	@Query("SELECT m.receiverName, MAX(m.id) FROM Mensaje m WHERE m.senderName = :usuario GROUP BY m.receiverName")
+	List<Object[]> ultimoIdEnviadoPorReceptor(@Param("usuario") String usuario);
+
+	/** Para la vista previa: id del ultimo mensaje que RECIBI de cada interlocutor (usa idx receptor,emisor,id). */
+	@Query("SELECT m.senderName, MAX(m.id) FROM Mensaje m WHERE m.receiverName = :usuario GROUP BY m.senderName")
+	List<Object[]> ultimoIdRecibidoPorEmisor(@Param("usuario") String usuario);
 }
