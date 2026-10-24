@@ -24,7 +24,7 @@ public interface SeguimientoRepository extends JpaRepository<Seguimiento, Long> 
 	long countByColaborador_IdPersona(Long idColaborador);
 
 	@Modifying
-	@Query(value = "DELETE FROM Seguimiento s WHERE s.id_colaborador = :idColaborador AND s.id_contratante = :idContratante", nativeQuery = true)
+	@Query(value = "DELETE FROM seguimiento s WHERE s.id_colaborador = :idColaborador AND s.id_contratante = :idContratante", nativeQuery = true)
 	int eliminarPorColaboradorYContratante(@Param("idColaborador") Long idColaborador,
 			@Param("idContratante") Long idContratante);
 
